@@ -6,12 +6,21 @@ Based on Maple Mini CPU module (http://wiki.stm32duino.com/index.php?title=Maple
 
 Connect a PPM signal to pin 2 (PB2). Note- 5v max. 
 
-Mapping:
-   Joystick.X               (1)Aileron 
+## Mapping:
+
+   Joystick.X               (1)Aileron
+   
    Joystick.Y               (2)Eelevator
+
    Joystick.Xrotate         (4)Rudder
+
    Joystick.Yrotate         (6)Ch6
+
    Joystick.sliderLeft      (7)Ch7
+
    Joystick.sliderRight     (3)Throttle 
+
    Joystick.button1         (5)Gear 
-   Joystick.button2         (8)Ch8 
+
+   Joystick.button2         (8)Ch8
+   
