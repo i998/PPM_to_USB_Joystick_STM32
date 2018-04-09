@@ -8,11 +8,11 @@ Connect a PPM signal to pin 2 (PB2). Note- 5v max.
 
 ## Mapping:
 
-   Joystick.X               (1)Aileron
+   Joystick.X				(1)Aileron
    
-   Joystick.Y               (2)Eelevator
+   Joystick.Y				(2)Eelevator
 
-   Joystick.Xrotate         (4)Rudder
+   Joystick.Xrotate			(4)Rudder
 
    Joystick.Yrotate         (6)Ch6
 
