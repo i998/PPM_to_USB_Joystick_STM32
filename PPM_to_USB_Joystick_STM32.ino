@@ -1,5 +1,5 @@
 /*
-v02 - PPM to USB Joystick
+v01 - PPM to USB Joystick
 
 Mapping:
    Joystick.X            <->      (1)Aileron 
@@ -18,8 +18,7 @@ PPM Reader Library: https://github.com/i998/FlyByWire
   
 Status:  Works OK
 
-Change list:
-- mapping updated    
+Change list:   
 - modified to use Maple Mini and a PPM reader library  
 
 Notes:
@@ -135,8 +134,8 @@ Serial.println("Setup() started ");
 
  // The minimum value (time) after which the signal frame is considered to
  // be finished and we can start to expect a new signal frame.
- // Walkera has 10000 us as blank frame    
-    ppm.blankTime = 10000;
+ // Walkera has 6000 us minimum as a blank frame    
+    ppm.blankTime = 5000;
 
   //Calibration multipliers to apply to raw channel data values before 
   //they are returned as a normalised data (rawValues[i] * multiplierScale + multiplierBias;)
