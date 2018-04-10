@@ -1,15 +1,15 @@
 /*
-v01 - PPM to USB Joystick
+v02 - PPM to USB Joystick
 
 Mapping:
-   Joystick.X               (1)Aileron 
-   Joystick.Y               (2)Eelev
-   Joystick.Xrotate         (4)Rudder
-   Joystick.Yrotate         (6)Ch6
-   Joystick.sliderLeft      (7)Ch7
-   Joystick.sliderRight     (3)Throttle 
-   Joystick.button1         (5)Gear 
-   Joystick.button2         (8)Ch8 
+   Joystick.X            <->      (1)Aileron 
+   Joystick.Y            <->      (2)Eelev
+   Joystick.Xrotate      <->      (4)Rudder
+   Joystick.Yrotate      <->      (5)Gear
+   Joystick.sliderLeft   <->      (6)Ch6 (flaps)
+   Joystick.sliderRight  <->      (3)Throttle  
+   Joystick.button       <->      (7)Ch7
+   Joystick.button       <->      (8)Ch8 
 
  
 Original idea:  https://github.com/voroshkov/Leonardo-USB-RC-Adapter 
@@ -18,7 +18,8 @@ PPM Reader Library: https://github.com/i998/FlyByWire
   
 Status:  Works OK
 
-Change list:   
+Change list:
+- mapping updated    
 - modified to use Maple Mini and a PPM reader library  
 
 Notes:
@@ -213,10 +214,10 @@ if(timestampNew!=0 && timestampNew!=timestampOld){ //data is ready and it is a n
    Joystick.X(PpmToJoystickValue(channelsIN[1]));            //      (1)Aileron 
    Joystick.Y(PpmToJoystickValue(channelsIN[2]));            //      (2)Eelev
    Joystick.Xrotate(PpmToJoystickValue(channelsIN[4]));      //      (4)Rudder
-   Joystick.Yrotate(PpmToJoystickValue(channelsIN[6]));      //      (6)Ch6
-   Joystick.sliderLeft(PpmToJoystickValue(channelsIN[7]));   //      (7)Ch7
+   Joystick.Yrotate(PpmToJoystickValue(channelsIN[5]));      //      (5)Gear
+   Joystick.sliderLeft(PpmToJoystickValue(channelsIN[6]));   //      (6)Ch6 (flaps)
    Joystick.sliderRight(PpmToJoystickValue(channelsIN[3]));  //      (3)Throttle  
-   Joystick.button(1,(channelsIN[5] > channelMidPoint));      //     (5)Gear 
+   Joystick.button(1,(channelsIN[7] > channelMidPoint));      //     (7)Ch7
    Joystick.button(2,(channelsIN[8] > channelMidPoint));      //     (8)Ch8 
    //Joystick.hat(0);
    
