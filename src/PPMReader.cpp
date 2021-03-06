@@ -1,6 +1,8 @@
 /*
 Original library is from https://github.com/Nikkilae/PPM-reader
 Updated by IF 
+2021-03-05
+- disable interrupts when read from volatile variables outside of ISR (https://github.com/Nikkilae/PPM-reader/pull/1)
 2018-04-09
 - added extra conditions to ISR
 2018-01-13
@@ -64,8 +66,8 @@ PPMReader::PPMReader(uint8_t channelAmount) {
 
 /* Delete PMReader object */
 PPMReader::~PPMReader() {
-    delete [] rawValues;
     detachInterrupt(interruptPin);
+	delete [] rawValues;
 	
 #ifdef ENABLE_DEBUG_OUTPUT_PPMReader
   Serial.println("PPMReader::~PPMReader completed"); 
@@ -166,7 +168,9 @@ uint32_t PPMReader::readRaw(uint16_t* channels, bool forseRead) {
 
 	if (isDataReady) {
 		for (uint8_t i = 1; i <= channelAmount; ++i) { 
+			noInterrupts();
 			channels[i] = rawValues[i];
+			interrupts();
 		}
 		// Set fail safe value to Channel 0 
 		if (failSafe) {
@@ -184,7 +188,9 @@ uint32_t PPMReader::readRaw(uint16_t* channels, bool forseRead) {
 	{
 	   if (forseRead) { //still update the channels with the latest raw data available
 			for (uint8_t i = 1; i <= channelAmount; ++i) { 
+				noInterrupts();
 				channels[i] = rawValues[i];
+				interrupts();
 			}
 		
 		    // Set fail safe value to Channel 0 
@@ -217,7 +223,9 @@ uint32_t PPMReader::readNormalisedInteger(uint16_t* channels, bool forseRead) {
 			//channels[i] = (uint16_t) rawValues[i] * multiplierScale + multiplierBias;
 			
 			//apply multipliers AND constraints 
+			noInterrupts();
             channels[i] = (uint16_t) constrain((uint16_t) rawValues[i] * multiplierScale + multiplierBias, minChannelValue, maxChannelValue);
+			interrupts();
 		}
         
 		// Set fail safe value to Channel 0 
@@ -239,7 +247,9 @@ uint32_t PPMReader::readNormalisedInteger(uint16_t* channels, bool forseRead) {
 				//channels[i] = (uint16_t) rawValues[i] * multiplierScale + multiplierBias;
 			
 				//apply multipliers AND constraints 
+				noInterrupts();
                 channels[i] = (uint16_t) constrain((uint16_t) rawValues[i] * multiplierScale + multiplierBias, minChannelValue, maxChannelValue);
+				interrupts();
 			}
 			// Set fail safe value to Channel 0 
 			if (failSafe) {
@@ -277,8 +287,9 @@ uint32_t PPMReader::readNormalisedFloat(float* channels, bool forseRead) {
 			//channels[i] = (float) rawValues[i] * multiplierScale + multiplierBias;
 			
 			//apply multipliers AND constraints 
+			noInterrupts();
 			channels[i] = (float) constrain((float) rawValues[i] * multiplierScale + multiplierBias, minChannelValue, maxChannelValue);
-               
+            interrupts();   
 		}
 		
 		// Set fail safe value to Channel 0 
@@ -300,7 +311,9 @@ uint32_t PPMReader::readNormalisedFloat(float* channels, bool forseRead) {
 				//channels[i] = (float) rawValues[i] * multiplierScale + multiplierBias;
 			
 				//apply multipliers AND constraints 
+				noInterrupts();
 				channels[i] = (float) constrain((float) rawValues[i] * multiplierScale + multiplierBias, minChannelValue, maxChannelValue);
+				interrupts();
 			}
 			
 			// Set fail safe value to Channel 0 

@@ -1,5 +1,5 @@
 /*
-v01 - PPM to USB Joystick
+v02 - PPM to USB Joystick
 
 Mapping:
    Joystick.X            <->      (1)Aileron 
@@ -19,7 +19,9 @@ PPM Reader Library: https://github.com/i998/FlyByWire
 Status:  Works OK
 
 Change list:   
-- modified to use Maple Mini and a PPM reader library  
+- updated PPM to USB Joystick to adapt to the changes in the USB HID library  
+- updated PPMReader  - interrupts disabled when reading from volatile variables outside of ISR (https://github.com/Nikkilae/PPM-reader/pull/1)
+- modified to use Maple Mini and a PPM reader library   
 
 Notes:
 - Compiled with Fastest (-O3) settings 
@@ -29,7 +31,7 @@ TODO:
 - detect or read from hardware a number of input PPM channels   
 
 =================================================================
-(C)2018 ifh  
+(C)2021,2018 ifh  
 This file is part of PPM to USB Joystick.
 
 PPM to USB Joystick is free software: you can redistribute it and/or modify
@@ -96,7 +98,12 @@ PPMReader ppm(channelAmountIn);
     uint16_t channelsIN[9];  // for PPM, 8 channels, 1..8, 9 values indexed {0..8}
     //float channelsIN[9];  // for PPM, 8 channels, 1..8,9 values indexed {0..8}
 
-//===========================================================
+
+//=================Set Up Joystick ======================
+
+USBHID HID;
+HIDJoystick Joystick(HID);
+
 
 //=================SETUP()===================================
 void setup() {
@@ -157,7 +164,7 @@ Serial.println("Setup() started ");
 
 
 //=====Set Up Joystick ===============
-USBHID.begin(HID_JOYSTICK);
+HID.begin(HID_JOYSTICK);
 
 /* joystick reference:
 X
