@@ -18,12 +18,19 @@ Note - input signal is 5v max. Or use a resistor and a diode as a signal convert
 ## Signal Mapping:
 
    Joystick.X            <->      (1)Aileron
+   
    Joystick.Y            <->      (2)Eelev
+   
    Joystick.Xrotate      <->      (4)Rudder
+   
    Joystick.Yrotate      <->      (5)Gear
+   
    Joystick.sliderLeft   <->      (6)Ch6 (flaps)
+   
    Joystick.sliderRight  <->      (3)Throttle  
+   
    Joystick.button       <->      (7)Ch7
+   
    Joystick.button       <->      (8)Ch8 
   
    
