@@ -1,6 +1,8 @@
 /*
 Original library is from https://github.com/Nikkilae/PPM-reader
 Updated by IF 
+2022-02-23
+- removed unnecessary comparison 
 2021-03-05
 - disable interrupts when read from volatile variables outside of ISR (https://github.com/Nikkilae/PPM-reader/pull/1)
 2018-04-09
@@ -149,7 +151,7 @@ void PPMReader::ISR() {
 uint16_t PPMReader::rawChannelValue(uint8_t channel) {
     // Check for channel's validity and return the latest raw channel value or 0
     uint16_t value = 0;
-    if (channel >= 0 && channel <= channelAmount) {
+    if (channel <= channelAmount) {
         value = rawValues[channel];
     }
     return value;

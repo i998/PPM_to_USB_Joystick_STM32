@@ -1,5 +1,5 @@
 /*
-v02 - PPM to USB Joystick
+v03 - PPM to USB Joystick
 
 Mapping:
    Joystick.X            <->      (1)Aileron 
@@ -18,7 +18,11 @@ PPM Reader Library: https://github.com/i998/FlyByWire
   
 Status:  Works OK
 
-Change list:   
+Change list:
+v0.3:
+- added Median filter which shall reduce effect of potential jitter/outlier values for RC channels. 5-point median filtering is used  
+- minor bugfixes
+v0.2  
 - updated PPM to USB Joystick to adapt to the changes in the USB HID library  
 - updated PPMReader  - interrupts disabled when reading from volatile variables outside of ISR (https://github.com/Nikkilae/PPM-reader/pull/1)
 - modified to use Maple Mini and a PPM reader library   
@@ -31,7 +35,7 @@ TODO:
 - detect or read from hardware a number of input PPM channels   
 
 =================================================================
-(C)2021,2018 ifh  
+(C)2022,2021,2018 ifh  
 This file is part of PPM to USB Joystick.
 
 PPM to USB Joystick is free software: you can redistribute it and/or modify
@@ -54,7 +58,7 @@ included in all copies or substantial portions of the Software.
 
 //use local copies of the libraries 
 #include "src\PPMReader.h"
-
+#include "src\MedianFilter.h"
 
 
 
@@ -98,7 +102,12 @@ PPMReader ppm(channelAmountIn);
     uint16_t channelsIN[9];  // for PPM, 8 channels, 1..8, 9 values indexed {0..8}
     //float channelsIN[9];  // for PPM, 8 channels, 1..8,9 values indexed {0..8}
 
+     uint16_t channelsIN_MF[9];  // for Median Filter  - contains input channels after filter is applied 
+	
+//========Set Up Median Filter =====================
+MedianFilter Filter;
 
+	
 //=================Set Up Joystick ======================
 
 USBHID HID;
@@ -124,6 +133,13 @@ void setup() {
 Serial.println("Setup() started ");
 #endif
 //===============================
+
+
+//=====setup Median Filter ===============
+  Filter.channelAmountIn = channelAmountIn;
+  Filter.channelAmountOut = channelAmountIn;  //use same number of channels for both input and output
+  Serial.println("Median Filter setup completed");
+
 
 
 
@@ -214,19 +230,23 @@ if(timestampNew!=0 && timestampNew!=timestampOld){ //data is ready and it is a n
   #endif
   //==========================================================================
 
-
+  //Apply Median Filter   
+    Filter.ApplyFilter(channelsIN, channelsIN_MF);
+    //Filter.Passthrough(channelsIN, channelsIN_MF);
+  
+    
   // Convert PPM values to USB joystick values and send them to USB 
   if (millis()- timestampDataSentToUsb >= minDelayToSendToUsb) { //delay if needed
     timestampDataSentToUsb  = millis(); 
   
-   Joystick.X(PpmToJoystickValue(channelsIN[1]));            //      (1)Aileron 
-   Joystick.Y(PpmToJoystickValue(channelsIN[2]));            //      (2)Eelev
-   Joystick.Xrotate(PpmToJoystickValue(channelsIN[4]));      //      (4)Rudder
-   Joystick.Yrotate(PpmToJoystickValue(channelsIN[5]));      //      (5)Gear
-   Joystick.sliderLeft(PpmToJoystickValue(channelsIN[6]));   //      (6)Ch6 (flaps)
-   Joystick.sliderRight(PpmToJoystickValue(channelsIN[3]));  //      (3)Throttle  
-   Joystick.button(1,(channelsIN[7] > channelMidPoint));      //     (7)Ch7
-   Joystick.button(2,(channelsIN[8] > channelMidPoint));      //     (8)Ch8 
+   Joystick.X(PpmToJoystickValue(channelsIN_MF[1]));            //      (1)Aileron 
+   Joystick.Y(PpmToJoystickValue(channelsIN_MF[2]));            //      (2)Eelev
+   Joystick.Xrotate(PpmToJoystickValue(channelsIN_MF[4]));      //      (4)Rudder
+   Joystick.Yrotate(PpmToJoystickValue(channelsIN_MF[5]));      //      (5)Gear
+   Joystick.sliderLeft(PpmToJoystickValue(channelsIN_MF[6]));   //      (6)Ch6 (flaps)
+   Joystick.sliderRight(PpmToJoystickValue(channelsIN_MF[3]));  //      (3)Throttle  
+   Joystick.button(1,(channelsIN_MF[7] > channelMidPoint));      //     (7)Ch7
+   Joystick.button(2,(channelsIN_MF[8] > channelMidPoint));      //     (8)Ch8 
    //Joystick.hat(0);
    
    Joystick.send();
@@ -239,10 +259,10 @@ else
 { 
   // data not ready yet, do something else in this loop
        
-        if (timestampNew=0){ //data is being received 
+        if (timestampNew==0){ //data is being received 
          // do something
         }
-        if (timestampNew=timestampOld){ // looping too fast, the same old data is available 
+        if (timestampNew==timestampOld){ // looping too fast, the same old data is available 
         // do something
    
         }

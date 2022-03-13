@@ -1,6 +1,8 @@
 /*
 Original library is from https://github.com/Nikkilae/PPM-reader
 Updated by IF 
+2022-02-23
+- removed unnecessary comparison 
 2021-03-05
 - disable interrupts when read from volatile variables outside of ISR (https://github.com/Nikkilae/PPM-reader/pull/1)
 2018-01-13

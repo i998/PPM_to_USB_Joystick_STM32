@@ -1,6 +1,6 @@
 # PPM_to_USB_Joystick_STM32
 
-An adapter to  convert PPM RC signal to a Joystick - so it can be recognised by simulators (FMS, RCPhoenix etc.)
+An adapter to  convert PPM RC signal to a Joystick - so it can be recognised by simulators (FMS, RCPhoenix etc.) A median filter shall reduce effect of potential jitter/outlier values for RC channels. 5-point median filtering is used.
 
 Based on the following: 
  
