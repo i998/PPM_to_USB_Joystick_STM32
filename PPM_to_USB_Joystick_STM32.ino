@@ -1,5 +1,5 @@
 /*
-v03 - PPM to USB Joystick
+v04 - PPM to USB Joystick
 
 Mapping:
    Joystick.X            <->      (1)Aileron 
@@ -19,6 +19,8 @@ PPM Reader Library: https://github.com/i998/FlyByWire
 Status:  Works OK
 
 Change list:
+v0.4:
+- bugfix - variable type mismatch
 v0.3:
 - added Median filter which shall reduce effect of potential jitter/outlier values for RC channels. 5-point median filtering is used  
 - minor bugfixes
@@ -35,7 +37,7 @@ TODO:
 - detect or read from hardware a number of input PPM channels   
 
 =================================================================
-(C)2022,2021,2018 ifh  
+(C)2025,2022,2021,2018 ifh  
 This file is part of PPM to USB Joystick.
 
 PPM to USB Joystick is free software: you can redistribute it and/or modify
@@ -82,11 +84,11 @@ uint16_t minJoystickChannelValue = 0;
 uint16_t maxJoystickChannelValue = 1023;
 
 //timestamp variables
-uint16_t timestampOld =0;
-uint16_t timestampNew =0;
+uint32_t timestampOld =0;
+uint32_t timestampNew =0;
 
-uint16_t timestampDataSentToUsb =0;
-uint16_t minDelayToSendToUsb = 1; //miliseconds  
+uint32_t timestampDataSentToUsb =0;
+uint32_t minDelayToSendToUsb = 1; //miliseconds  
 
 
 //=================Set Up PPM receiver ======================
